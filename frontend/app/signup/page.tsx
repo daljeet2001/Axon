@@ -16,7 +16,7 @@ export default function Signup() {
 
   return (
     <div>
-      <Appbar />
+      {/* <Appbar /> */}
       <div className="flex justify-center px-4">
         <div className="flex flex-col md:flex-row pt-8 max-w-5xl w-full gap-8">
           {/* Left: Features */}

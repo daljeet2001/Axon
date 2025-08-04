@@ -42,7 +42,6 @@ router.post("/signup", (req, res) => __awaiter(void 0, void 0, void 0, function*
     yield db_1.prismaClient.user.create({
         data: {
             email: parsedData.data.username,
-            // TODO: Dont store passwords in plaintext, hash it
             password: parsedData.data.password,
             name: parsedData.data.name
         }
