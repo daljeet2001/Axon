@@ -1,5 +1,4 @@
-require('dotenv').config()
-
+import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { Kafka } from "kafkajs";
@@ -65,26 +64,28 @@ async function main() {
           const zapRunMetadata = zapRunDetails?.metadata;
 
           if (currentAction.type.id === "email") {
-            const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
-            const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
-            console.log(`Sending out email to ${to} body is ${body}`)
-            await sendEmail(to, body);
+            // const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
+            // const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
+            // console.log(`Sending out email to ${to} body is ${body}`)
+            // await sendEmail(to, body);
+            console.log("sending email")
           }
 
           if (currentAction.type.id === "send-sol") {
 
-            const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
-            const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
-            console.log(`Sending out SOL of ${amount} to address ${address}`);
-            await sendSol(address, amount);
+            // const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
+            // const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
+            // console.log(`Sending out SOL of ${amount} to address ${address}`);
+            // await sendSol(address, amount);
+            console.log("sending sol")
           }
           
-          // 
+        
           await new Promise(r => setTimeout(r, 500));
 
           const lastStage = (zapRunDetails?.zap.actions?.length || 1) - 1; // 1
-          console.log(lastStage);
-          console.log(stage);
+          // console.log(lastStage);
+          // console.log(stage);
           if (lastStage !== stage) {
             console.log("pushing back to the queue")
             await producer.send({
@@ -99,7 +100,7 @@ async function main() {
           }
 
           console.log("processing done");
-          // 
+       
           await consumer.commitOffsets([{
             topic: TOPIC_NAME,
             partition: partition,

@@ -113,11 +113,11 @@ function ZapTable({ zaps }: { zaps: Zap[] }) {
                     <div className="flex-1 text-sm text-gray-600">Nov 13, 2023</div>
 
                   
-                    <div className="flex-1 hidden sm:block text-sm truncate">
+                    <div className="flex-1 hidden sm:block text-sm break-all">
                         {`${HOOKS_URL}/hooks/catch/1/${z.id}`}
                     </div>
 
-                    <div className="flex-1">
+                    <div className="flex-1 pointer-events-none opacity-50">
                         <LinkButton
                             onClick={() => {
                                 router.push("/zap/" + z.id);

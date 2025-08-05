@@ -23,23 +23,25 @@ app.post("/hooks/catch/:userId/:zapId", (req, res) => __awaiter(void 0, void 0, 
     const userId = req.params.userId;
     const zapId = req.params.zapId;
     const body = req.body;
-    // store in db a new trigger
-    yield client.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
-        const run = yield tx.zapRun.create({
-            data: {
-                zapId: zapId,
-                metadata: body
-            }
-        });
-        ;
-        yield tx.zapRunOutbox.create({
-            data: {
-                zapRunId: run.id
-            }
-        });
-    }));
-    res.json({
-        message: "Webhook received"
-    });
+    try {
+        yield client.$transaction((tx) => __awaiter(void 0, void 0, void 0, function* () {
+            const run = yield tx.zapRun.create({
+                data: {
+                    zapId,
+                    metadata: body
+                }
+            });
+            const outbox = yield tx.zapRunOutbox.create({
+                data: {
+                    zapRunId: run.id
+                }
+            });
+        }));
+        res.json({ message: "Webhook received" });
+    }
+    catch (e) {
+        console.error("Transaction failed:", e);
+        res.status(500).json({ error: "Transaction failed" });
+    }
 }));
 app.listen(3002);
