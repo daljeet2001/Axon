@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const client_1 = require("@prisma/client");
 const kafkajs_1 = require("kafkajs");
+const parser_1 = require("./parser");
+const email_1 = require("./email");
 const prismaClient = new client_1.PrismaClient();
 const TOPIC_NAME = "axon";
 const kafka = new kafkajs_1.Kafka({
@@ -28,7 +30,7 @@ function main() {
         yield consumer.run({
             autoCommit: false,
             eachMessage: (_a) => __awaiter(this, [_a], void 0, function* ({ topic, partition, message }) {
-                var _b, _c, _d, _e;
+                var _b, _c, _d, _e, _f, _g, _h, _j;
                 console.log({
                     partition,
                     offset: message.offset,
@@ -62,22 +64,25 @@ function main() {
                     return;
                 }
                 const zapRunMetadata = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.metadata;
+                console.log('zaprunmetadata', zapRunMetadata);
                 if (currentAction.type.id === "email") {
-                    // const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
-                    // const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
-                    // console.log(`Sending out email to ${to} body is ${body}`)
-                    // await sendEmail(to, body);
+                    const body = (0, parser_1.parse)((_e = currentAction.metadata) === null || _e === void 0 ? void 0 : _e.body, zapRunMetadata);
+                    // console.log("body", body);
+                    const to = (0, parser_1.parse)((_f = currentAction.metadata) === null || _f === void 0 ? void 0 : _f.email, zapRunMetadata);
+                    // console.log("to", to);
+                    console.log(`Sending out email to ${to} body is ${body}`);
+                    yield (0, email_1.sendEmail)(to, body);
                     console.log("sending email");
                 }
                 if (currentAction.type.id === "send-sol") {
-                    // const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
-                    // const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
-                    // console.log(`Sending out SOL of ${amount} to address ${address}`);
+                    const amount = (0, parser_1.parse)((_g = currentAction.metadata) === null || _g === void 0 ? void 0 : _g.amount, zapRunMetadata);
+                    const address = (0, parser_1.parse)((_h = currentAction.metadata) === null || _h === void 0 ? void 0 : _h.address, zapRunMetadata);
+                    console.log(`Sending out SOL of ${amount} to address ${address}`);
                     // await sendSol(address, amount);
                     console.log("sending sol");
                 }
                 yield new Promise(r => setTimeout(r, 500));
-                const lastStage = (((_e = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.zap.actions) === null || _e === void 0 ? void 0 : _e.length) || 1) - 1; // 1
+                const lastStage = (((_j = zapRunDetails === null || zapRunDetails === void 0 ? void 0 : zapRunDetails.zap.actions) === null || _j === void 0 ? void 0 : _j.length) || 1) - 1; // 1
                 // console.log(lastStage);
                 // console.log(stage);
                 if (lastStage !== stage) {

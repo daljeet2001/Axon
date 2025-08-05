@@ -14,8 +14,13 @@ const prismaClient = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         // Delete all records first
+        yield prismaClient.action.deleteMany({});
+        yield prismaClient.trigger.deleteMany({});
         yield prismaClient.availableAction.deleteMany({});
         yield prismaClient.availableTrigger.deleteMany({});
+        yield prismaClient.zapRun.deleteMany({});
+        yield prismaClient.zap.deleteMany({});
+        yield prismaClient.zapRunOutbox.deleteMany({});
         // Seed available triggers
         yield prismaClient.availableTrigger.upsert({
             where: { id: "webhook" },

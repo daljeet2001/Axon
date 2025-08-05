@@ -4,8 +4,17 @@ const prismaClient = new PrismaClient();
 
 async function main() {
   // Delete all records first
+  await prismaClient.action.deleteMany({});
+  await prismaClient.trigger.deleteMany({});
   await prismaClient.availableAction.deleteMany({});
   await prismaClient.availableTrigger.deleteMany({});
+  await prismaClient.zapRun.deleteMany({});
+  await prismaClient.zap.deleteMany({});
+  await prismaClient.zapRunOutbox.deleteMany({});
+
+  
+ 
+
 
   // Seed available triggers
   await prismaClient.availableTrigger.upsert({

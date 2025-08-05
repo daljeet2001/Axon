@@ -14,26 +14,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = sendEmail;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-// SOL_PRIVATE_KEY=""
-// SMTP_USERNAME=""
-// SMTP_PASSWORD=""
-// SMTP_ENDPOINT
 const transport = nodemailer_1.default.createTransport({
-    host: process.env.SMTP_ENDPOINT,
+    host: process.env.BREVO_ENDPOINT,
     port: 587,
-    secure: false, // upgrade later with STARTTLS
+    secure: false,
     auth: {
-        user: process.env.SMTP_USERNAME,
-        pass: process.env.SMTP_PASSWORD,
+        user: process.env.BREVO_USERNAME,
+        pass: process.env.BREVO_PASSWORD,
     },
 });
 function sendEmail(to, body) {
     return __awaiter(this, void 0, void 0, function* () {
         yield transport.sendMail({
-            from: "contact@100xdevs.com",
-            sender: "contact@100xdevs.com",
+            from: "singhdaljit25126@gmail.com",
             to,
-            subject: "Hello from Zapier",
+            subject: "Hello from Axon",
             text: body
         });
     });

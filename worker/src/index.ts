@@ -62,20 +62,23 @@ async function main() {
           }
 
           const zapRunMetadata = zapRunDetails?.metadata;
+          console.log('zaprunmetadata',zapRunMetadata)
 
           if (currentAction.type.id === "email") {
-            // const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
-            // const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
-            // console.log(`Sending out email to ${to} body is ${body}`)
-            // await sendEmail(to, body);
+            const body = parse((currentAction.metadata as JsonObject)?.body as string, zapRunMetadata);
+            // console.log("body", body);
+            const to = parse((currentAction.metadata as JsonObject)?.email as string, zapRunMetadata);
+            // console.log("to", to);
+            console.log(`Sending out email to ${to} body is ${body}`)
+            await sendEmail(to, body);
             console.log("sending email")
           }
 
           if (currentAction.type.id === "send-sol") {
 
-            // const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
-            // const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
-            // console.log(`Sending out SOL of ${amount} to address ${address}`);
+            const amount = parse((currentAction.metadata as JsonObject)?.amount as string, zapRunMetadata);
+            const address = parse((currentAction.metadata as JsonObject)?.address as string, zapRunMetadata);
+            console.log(`Sending out SOL of ${amount} to address ${address}`);
             // await sendSol(address, amount);
             console.log("sending sol")
           }
