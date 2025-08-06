@@ -63,11 +63,11 @@ function main() {
                     });
                     console.log(`[Processor] Processed ${pendingRows.length} rows`);
                 }
-                yield new Promise((r) => setTimeout(r, 3000)); // 3 sec pause
+                yield new Promise((r) => setTimeout(r, 3000));
             }
             catch (err) {
                 console.error('Error in processor loop:', err);
-                yield new Promise((r) => setTimeout(r, 5000)); // pause on error
+                yield new Promise((r) => setTimeout(r, 5000));
             }
         }
     });
