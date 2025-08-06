@@ -2,11 +2,10 @@
   "name": "worker",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "copy-cert": "mkdir -p dist/kafka && cp src/kafka/*.pem dist/kafka/",
-  "dev": "tsc -b && npm run copy-cert && node dist/index.js"
-},
-
+  "scripts": {
+    "copy-cert": "mkdir -p dist/kafka && cp src/kafka/*.pem dist/kafka/",
+    "dev": "tsc -b && npm run copy-cert && node dist/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,10 +14,12 @@
     "@prisma/client": "^6.13.0",
     "@solana/web3.js": "^1.98.4",
     "bs58": "^6.0.0",
+    "express": "^5.1.0",
     "kafkajs": "^2.2.4",
     "nodemailer": "^7.0.5"
   },
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
     "@types/nodemailer": "^6.4.17",
     "prisma": "^6.13.0"

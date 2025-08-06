@@ -1,15 +1,17 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import express from 'express';
 import { PrismaClient } from "@prisma/client";
-import {Kafka} from "kafkajs";
+import { Kafka } from "kafkajs";
 import fs from 'fs';
 import path from 'path';
 
-const TOPIC_NAME = "axon"
+const app = express();
+const PORT = process.env.PORT || 3005;
+const TOPIC_NAME = "axon";
 
 const client = new PrismaClient();
-
 
 const kafka = new Kafka({
   clientId: 'outbox-processor',
@@ -25,37 +27,53 @@ const kafka = new Kafka({
 });
 
 
-
 async function main() {
-    const producer =  kafka.producer();
-    await producer.connect();
+  const producer = kafka.producer();
+  await producer.connect();
+  console.log('Kafka producer connected');
 
-    while(1) {
-        const pendingRows = await client.zapRunOutbox.findMany({
-            where :{},
-            take: 10
-        })
-        console.log(pendingRows);
+  while (true) {
+    try {
+      const pendingRows = await client.zapRunOutbox.findMany({
+        where: {},
+        take: 10,
+      });
 
-        producer.send({
-            topic: TOPIC_NAME,
-            messages: pendingRows.map(r => {
-                return {
-                    value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 })
-                }
-            })
-        })  
+      if (pendingRows.length > 0) {
+        console.log(`[Processor] Found ${pendingRows.length} pending rows`);
+
+        await producer.send({
+          topic: TOPIC_NAME,
+          messages: pendingRows.map((r) => ({
+            value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 }),
+          })),
+        });
 
         await client.zapRunOutbox.deleteMany({
-            where: {
-                id: {
-                    in: pendingRows.map(x => x.id)
-                }
-            }
-        })
+          where: {
+            id: {
+              in: pendingRows.map((x) => x.id),
+            },
+          },
+        });
 
-        await new Promise(r => setTimeout(r, 3000));
+        console.log(`[Processor] Processed ${pendingRows.length} rows`);
+      }
+
+      await new Promise((r) => setTimeout(r, 3000)); 
+    } catch (err) {
+      console.error('Error in processor loop:', err);
+      await new Promise((r) => setTimeout(r, 5000)); 
     }
+  }
 }
 
-main();
+
+app.get('/', (req, res) => {
+  res.send('Outbox processor is running...');
+});
+
+app.listen(PORT, () => {
+  console.log(`Express server started on port ${PORT}`);
+  main(); 
+});

@@ -14,10 +14,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
 const kafkajs_1 = require("kafkajs");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const app = (0, express_1.default)();
+const PORT = process.env.PORT || 3005;
 const TOPIC_NAME = "axon";
 const client = new client_1.PrismaClient();
 const kafka = new kafkajs_1.Kafka({
@@ -36,29 +39,43 @@ function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const producer = kafka.producer();
         yield producer.connect();
-        while (1) {
-            const pendingRows = yield client.zapRunOutbox.findMany({
-                where: {},
-                take: 10
-            });
-            console.log(pendingRows);
-            producer.send({
-                topic: TOPIC_NAME,
-                messages: pendingRows.map(r => {
-                    return {
-                        value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 })
-                    };
-                })
-            });
-            yield client.zapRunOutbox.deleteMany({
-                where: {
-                    id: {
-                        in: pendingRows.map(x => x.id)
-                    }
+        console.log('Kafka producer connected');
+        while (true) {
+            try {
+                const pendingRows = yield client.zapRunOutbox.findMany({
+                    where: {},
+                    take: 10,
+                });
+                if (pendingRows.length > 0) {
+                    console.log(`[Processor] Found ${pendingRows.length} pending rows`);
+                    yield producer.send({
+                        topic: TOPIC_NAME,
+                        messages: pendingRows.map((r) => ({
+                            value: JSON.stringify({ zapRunId: r.zapRunId, stage: 0 }),
+                        })),
+                    });
+                    yield client.zapRunOutbox.deleteMany({
+                        where: {
+                            id: {
+                                in: pendingRows.map((x) => x.id),
+                            },
+                        },
+                    });
+                    console.log(`[Processor] Processed ${pendingRows.length} rows`);
                 }
-            });
-            yield new Promise(r => setTimeout(r, 3000));
+                yield new Promise((r) => setTimeout(r, 3000)); // 3 sec pause
+            }
+            catch (err) {
+                console.error('Error in processor loop:', err);
+                yield new Promise((r) => setTimeout(r, 5000)); // pause on error
+            }
         }
     });
 }
-main();
+app.get('/', (req, res) => {
+    res.send('Outbox processor is running...');
+});
+app.listen(PORT, () => {
+    console.log(`Express server started on port ${PORT}`);
+    main();
+});

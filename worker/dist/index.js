@@ -13,12 +13,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
+const express_1 = __importDefault(require("express"));
 const client_1 = require("@prisma/client");
 const kafkajs_1 = require("kafkajs");
 const parser_1 = require("./parser");
 const email_1 = require("./email");
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const app = (0, express_1.default)();
+const PORT = process.env.PORT || 3006;
 const prismaClient = new client_1.PrismaClient();
 const TOPIC_NAME = "axon";
 console.log("broker:", process.env.KAFKA_BROKER_URL);
@@ -121,4 +124,10 @@ function main() {
         });
     });
 }
-main();
+app.get('/', (req, res) => {
+    res.send('Outbox processor is running...');
+});
+app.listen(PORT, () => {
+    console.log(`Express server started on port ${PORT}`);
+    main();
+});

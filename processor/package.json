@@ -2,10 +2,10 @@
   "name": "processor",
   "version": "1.0.0",
   "main": "index.js",
-"scripts": {
-  "copy-cert": "mkdir -p dist/kafka && cp src/kafka/*.pem dist/kafka/",
-  "dev": "tsc -b && npm run copy-cert && node dist/index.js"
-},
+  "scripts": {
+    "copy-cert": "mkdir -p dist/kafka && cp src/kafka/*.pem dist/kafka/",
+    "dev": "tsc -b && npm run copy-cert && node dist/index.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -13,10 +13,14 @@
   "dependencies": {
     "@prisma/client": "^6.13.0",
     "dotenv": "^17.2.1",
+    "express": "^5.1.0",
     "kafkajs": "^2.2.4",
     "prisma": "^6.13.0"
   },
   "devDependencies": {
-    "@types/node": "^24.2.0"
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.2.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }

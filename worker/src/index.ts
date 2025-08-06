@@ -1,4 +1,5 @@
 import "dotenv/config";
+import express from 'express';
 import { PrismaClient } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { Kafka } from "kafkajs";
@@ -7,6 +8,9 @@ import { sendEmail } from "./email";
 import { sendSol } from "./solana";
 import fs from 'fs';
 import path from 'path';
+
+const app= express();
+const PORT = process.env.PORT || 3006;
 
 const prismaClient = new PrismaClient();
 const TOPIC_NAME = "axon"
@@ -128,4 +132,12 @@ async function main() {
 
 }
 
-main()
+app.get('/', (req, res) => {
+  res.send('Outbox processor is running...');
+});
+
+app.listen(PORT, () => {
+  console.log(`Express server started on port ${PORT}`);
+  main(); 
+});
+
