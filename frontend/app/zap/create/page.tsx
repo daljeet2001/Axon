@@ -2,6 +2,7 @@
 
 import { BACKEND_URL } from "@/app/config";
 import { Appbar } from "@/components/Appbar";
+import Footer from "@/components/Footer";
 import { Input } from "@/components/Input";
 import { ZapCell } from "@/components/ZapCell";
 import { LinkButton } from "@/components/buttons/LinkButton";
@@ -119,6 +120,7 @@ export default function() {
             }
             setSelectedModalIndex(null);
         }} index={selectedModalIndex} />}
+        <Footer/>
     </div>
 }
 

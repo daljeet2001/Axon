@@ -5,14 +5,28 @@ import { Kafka } from "kafkajs";
 import { parse } from "./parser";
 import { sendEmail } from "./email";
 import { sendSol } from "./solana";
+import fs from 'fs';
+import path from 'path';
 
 const prismaClient = new PrismaClient();
 const TOPIC_NAME = "axon"
+console.log("broker:", process.env.KAFKA_BROKER_URL);
+
+
 
 const kafka = new Kafka({
-    clientId: 'outbox-processor-2',
-    brokers: ['localhost:9092']
-})
+  clientId: 'outbox-processor',
+  brokers: [process.env.KAFKA_BROKER_URL!],
+  ssl: {
+    ca: [fs.readFileSync(path.resolve(__dirname, './kafka/kaafka-ca.pem'), 'utf-8')],
+  },
+  sasl: {
+    mechanism: 'plain',
+    username: process.env.KAFKA_USERNAME!,
+    password: process.env.KAFKA_PASSWORD!,
+  },
+});
+
 
 async function main() {
     const consumer = kafka.consumer({ groupId: 'main-worker-2' });

@@ -8,17 +8,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 require("dotenv/config");
 const client_1 = require("@prisma/client");
 const kafkajs_1 = require("kafkajs");
 const parser_1 = require("./parser");
 const email_1 = require("./email");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const prismaClient = new client_1.PrismaClient();
 const TOPIC_NAME = "axon";
+console.log("broker:", process.env.KAFKA_BROKER_URL);
 const kafka = new kafkajs_1.Kafka({
-    clientId: 'outbox-processor-2',
-    brokers: ['localhost:9092']
+    clientId: 'outbox-processor',
+    brokers: [process.env.KAFKA_BROKER_URL],
+    ssl: {
+        ca: [fs_1.default.readFileSync(path_1.default.resolve(__dirname, './kafka/kaafka-ca.pem'), 'utf-8')],
+    },
+    sasl: {
+        mechanism: 'plain',
+        username: process.env.KAFKA_USERNAME,
+        password: process.env.KAFKA_PASSWORD,
+    },
 });
 function main() {
     return __awaiter(this, void 0, void 0, function* () {

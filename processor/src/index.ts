@@ -1,14 +1,30 @@
+import dotenv from 'dotenv';
+dotenv.config();
+
 import { PrismaClient } from "@prisma/client";
 import {Kafka} from "kafkajs";
+import fs from 'fs';
+import path from 'path';
 
 const TOPIC_NAME = "axon"
 
 const client = new PrismaClient();
 
+
 const kafka = new Kafka({
-    clientId: 'outbox-processor',
-    brokers: ['localhost:9092']
-})
+  clientId: 'outbox-processor',
+  brokers: [process.env.KAFKA_BROKER_URL!],
+  ssl: {
+    ca: [fs.readFileSync(path.resolve(__dirname, './kafka/kaafka-ca.pem'), 'utf-8')],
+  },
+  sasl: {
+    mechanism: 'plain',
+    username: process.env.KAFKA_USERNAME!,
+    password: process.env.KAFKA_PASSWORD!,
+  },
+});
+
+
 
 async function main() {
     const producer =  kafka.producer();

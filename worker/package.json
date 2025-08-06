@@ -2,9 +2,11 @@
   "name": "worker",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {
-    "dev": "tsc -b && node dist/index.js"
-  },
+"scripts": {
+  "copy-cert": "mkdir -p dist/kafka && cp src/kafka/*.pem dist/kafka/",
+  "dev": "tsc -b && npm run copy-cert && node dist/index.js"
+},
+
   "keywords": [],
   "author": "",
   "license": "ISC",
