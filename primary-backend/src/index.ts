@@ -18,3 +18,4 @@ app.use("/api/v1/trigger", triggerRouter);
 app.use("/api/v1/action", actionRouter);
 
 app.listen(8080);
+//openspi spec soon
