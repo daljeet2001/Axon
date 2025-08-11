@@ -41,10 +41,18 @@ const express_1 = __importStar(require("express"));
 const routes_1 = require("./routes/routes");
 // import { Response as ExResponse, Request as ExRequest } from "express";
 // import swaggerUi from "swagger-ui-express";
+// import cors from "cors";
+const cors_1 = __importDefault(require("cors"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_json_1 = __importDefault(require("./swagger.json"));
 exports.app = (0, express_1.default)();
+exports.app.use((0, cors_1.default)()); // enable CORS for all origins
 // Use body parser to read sent json payloads
+// app.use(cors({
+//   origin: "*", // or your live site domain
+//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+// }));
 exports.app.use((0, express_1.urlencoded)({
     extended: true,
 }));
@@ -55,5 +63,6 @@ exports.app.use((0, express_1.json)());
 //     swaggerUi.generateHTML(await import("../build/swagger.json"))
 //   );
 // });
+// app.options("*", cors());
 exports.app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
 (0, routes_1.RegisterRoutes)(exports.app);

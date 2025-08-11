@@ -42,7 +42,7 @@ function useZaps() {
 
     useEffect(() => {
         axios
-            .get(`${BACKEND_URL}/api/v1/zap`, {
+            .get(`${BACKEND_URL}/zap`, {
                 headers: {
                     Authorization: localStorage.getItem("token") || "",
                 },
@@ -106,11 +106,11 @@ function ZapTable({ zaps }: { zaps: Zap[] }) {
                     className="flex flex-col sm:flex-row border-b py-4 gap-2 sm:gap-0"
                 >
                     <div className="flex-1 flex items-center gap-2">
-                        <img src={z.trigger.type.image} className="w-[30px] h-[30px]" />
+                        <img src={z.trigger?.type?.image} className="w-[30px] h-[30px]" />
                         {z.actions.map((x, idx) => (
                             <img
                                 key={idx}
-                                src={x.type.image}
+                                src={x.type?.image}
                                 className="w-[30px] h-[30px]"
                             />
                         ))}

@@ -1,10 +1,10 @@
 {
   "name": "primary-backend",
   "version": "1.0.0",
-  "main": "index.js","scripts": {
-  "dev": "yarn tsoa routes && tsc && node build/server.js"
-},
-
+  "main": "index.js",
+  "scripts": {
+    "dev": "yarn tsoa routes && tsc && node build/server.js"
+  },
   "prisma": {
     "seed": "ts-node src/seed.ts"
   },
