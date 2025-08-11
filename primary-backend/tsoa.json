@@ -1,13 +1,14 @@
 {
-  "entryFile": "src/index.ts",
+  "entryFile": "src/app.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": ["src/router/*Controller.ts"],
+  "controllerPathGlobs": ["src/**/*Controller.ts"],
   "spec": {
-    "outputDirectory": "src",
+    "outputDirectory": "build",
     "specVersion": 3
   },
-  "routes": {
-    "routesDir": "src",
-    "middleware": "express"
-  }
+"routes": {
+  "routesDir": "src/routes",
+  "authenticationModule": "./src/auth.ts"
+}
+
 }

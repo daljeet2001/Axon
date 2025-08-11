@@ -2,9 +2,10 @@ import { Get, Route, Tags } from "tsoa";
 import { prismaClient } from "../db";
 
 interface AvailableAction {
-  id: number;
+  id: string;
   name: string;
-  // add any other fields your `availableAction` table has
+  image: string;
+
 }
 
 @Route("action")

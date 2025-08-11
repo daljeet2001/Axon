@@ -1,1 +1,1 @@
-{"root":["./src/config.ts","./src/index.ts","./src/middleware.ts","./src/seed.ts","./src/db/index.ts","./src/router/action.ts","./src/router/trigger.ts","./src/router/user.ts","./src/router/zap.ts","./src/types/index.ts"],"version":"5.9.2"}
+{"root":["./src/app.ts","./src/auth.ts","./src/config.ts","./src/seed.ts","./src/server.ts","./src/controllers/actioncontroller.ts","./src/controllers/triggercontroller.ts","./src/controllers/usercontroller.ts","./src/controllers/zapcontroller.ts","./src/db/index.ts","./src/routes/routes.ts","./src/types/index.ts"],"version":"5.9.2"}

@@ -1,21 +1,24 @@
-import { Body, Get, Post, Request, Route, Security, Tags } from "tsoa";
+import { Body, Get, Post, Request, Route, Security, Tags, Example } from "tsoa";
 import { prismaClient } from "../db";
 import jwt from "jsonwebtoken";
 import { JWT_PASSWORD } from "../config";
 import { SigninSchema, SignupSchema } from "../types";
 
-interface SignupRequest {
+// --------------------
+// DTOs for tsoa
+// --------------------
+export interface SignupRequest {
   username: string;
   password: string;
   name: string;
 }
 
-interface SigninRequest {
+export interface SigninRequest {
   username: string;
   password: string;
 }
 
-interface UserResponse {
+export interface UserResponse {
   name: string;
   email: string;
 }
@@ -23,8 +26,13 @@ interface UserResponse {
 @Route("user")
 @Tags("User")
 export class UserController {
+  /**
+   * Create a new user account
+   */
   @Post("signup")
-  public async signup(@Body() body: SignupRequest): Promise<{ message: string }> {
+  public async signup(
+    @Body() body: SignupRequest
+  ): Promise<{ message: string }> {
     const parsedData = SignupSchema.safeParse(body);
     if (!parsedData.success) {
       throw { status: 411, message: "Incorrect inputs" };
@@ -49,8 +57,13 @@ export class UserController {
     return { message: "Please verify your account by checking your email" };
   }
 
+  /**
+   * Authenticate and receive a JWT token
+   */
   @Post("signin")
-  public async signin(@Body() body: SigninRequest): Promise<{ token: string }> {
+  public async signin(
+    @Body() body: SigninRequest
+  ): Promise<{ token: string }> {
     const parsedData = SigninSchema.safeParse(body);
     if (!parsedData.success) {
       throw { status: 411, message: "Incorrect inputs" };
@@ -71,9 +84,14 @@ export class UserController {
     return { token };
   }
 
+  /**
+   * Get the currently authenticated user
+   */
   @Get("/")
   @Security("jwt")
-  public async getUser(@Request() req: any): Promise<{ user: UserResponse | null }> {
+  public async getUser(
+    @Request() req: any
+  ): Promise<{ user: UserResponse | null }> {
     const id = req.user?.id;
 
     const user = await prismaClient.user.findFirst({

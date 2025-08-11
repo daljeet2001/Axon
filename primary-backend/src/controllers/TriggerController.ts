@@ -2,9 +2,9 @@ import { Get, Route, Tags } from "tsoa";
 import { prismaClient } from "../db";
 
 interface AvailableTrigger {
-  id: number;
+  id: string;
   name: string;
-  // add more fields based on your DB schema
+  image: string;
 }
 
 @Route("trigger")

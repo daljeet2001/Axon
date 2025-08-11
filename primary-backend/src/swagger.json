@@ -1,0 +1,517 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"ZapActionMetadata": {
+				"properties": {},
+				"type": "object",
+				"additionalProperties": {
+					"anyOf": [
+						{
+							"type": "string"
+						},
+						{
+							"type": "number",
+							"format": "double"
+						},
+						{
+							"type": "boolean"
+						}
+					],
+					"nullable": true
+				}
+			},
+			"ZapAction": {
+				"properties": {
+					"availableActionId": {
+						"type": "string"
+					},
+					"actionMetadata": {
+						"$ref": "#/components/schemas/ZapActionMetadata"
+					}
+				},
+				"required": [
+					"availableActionId",
+					"actionMetadata"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ZapCreateInput": {
+				"properties": {
+					"availableTriggerId": {
+						"type": "string"
+					},
+					"actions": {
+						"items": {
+							"$ref": "#/components/schemas/ZapAction"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"availableTriggerId",
+					"actions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ZapResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"userId": {
+						"type": "number",
+						"format": "double"
+					},
+					"triggerId": {
+						"type": "string"
+					},
+					"actions": {
+						"items": {
+							"$ref": "#/components/schemas/ZapAction"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"id",
+					"userId",
+					"triggerId",
+					"actions"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignupRequest": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SigninRequest": {
+				"properties": {
+					"username": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"username",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UserResponse": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AvailableTrigger": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"image"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"AvailableAction": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"image": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"image"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "primary-backend",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/zap": {
+			"post": {
+				"operationId": "CreateZap",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"zapId": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"zapId"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Zap"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/ZapCreateInput"
+							}
+						}
+					}
+				}
+			},
+			"get": {
+				"operationId": "GetZaps",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"zaps": {
+											"items": {
+												"$ref": "#/components/schemas/ZapResponse"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"zaps"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Zap"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/zap/{zapId}": {
+			"get": {
+				"operationId": "GetZap",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"zap": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/ZapResponse"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"zap"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Zap"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "zapId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/user/signup": {
+			"post": {
+				"operationId": "Signup",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Create a new user account",
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignupRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user/signin": {
+			"post": {
+				"operationId": "Signin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"token": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"token"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Authenticate and receive a JWT token",
+				"tags": [
+					"User"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SigninRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/user": {
+			"get": {
+				"operationId": "GetUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"allOf": [
+												{
+													"$ref": "#/components/schemas/UserResponse"
+												}
+											],
+											"nullable": true
+										}
+									},
+									"required": [
+										"user"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get the currently authenticated user",
+				"tags": [
+					"User"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/trigger/available": {
+			"get": {
+				"operationId": "GetAvailableTriggers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"availableTriggers": {
+											"items": {
+												"$ref": "#/components/schemas/AvailableTrigger"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"availableTriggers"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Trigger"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/action/available": {
+			"get": {
+				"operationId": "GetAvailableActions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"availableActions": {
+											"items": {
+												"$ref": "#/components/schemas/AvailableAction"
+											},
+											"type": "array"
+										}
+									},
+									"required": [
+										"availableActions"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Action"
+				],
+				"security": [],
+				"parameters": []
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}
