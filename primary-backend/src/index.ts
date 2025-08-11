@@ -1,9 +1,9 @@
 import express from "express";
-import { userRouter } from "./router/user";
-import { zapRouter } from "./router/zap";
+import { userRouter } from "./router/UserController";
+import { zapRouter } from "./router/ZapController";
 import cors from "cors";
-import { triggerRouter } from "./router/trigger";
-import { actionRouter } from "./router/action";
+import { triggerRouter } from "./router/TriggerController";
+import { actionRouter } from "./router/ActionController";
 
 const app = express();
 app.use(express.json());
