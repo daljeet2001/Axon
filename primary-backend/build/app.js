@@ -32,6 +32,15 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -39,30 +48,26 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.app = void 0;
 const express_1 = __importStar(require("express"));
 const routes_1 = require("./routes/routes");
-// import { Response as ExResponse, Request as ExRequest } from "express";
-// import swaggerUi from "swagger-ui-express";
-// import cors from "cors";
 const cors_1 = __importDefault(require("cors"));
+const requestCount_1 = require("./monitoring/requestCount");
+const activeRequests_1 = require("./monitoring/activeRequests");
+const requestDuration_1 = require("./monitoring/requestDuration");
+const prom_client_1 = __importDefault(require("prom-client"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const swagger_json_1 = __importDefault(require("./swagger.json"));
 exports.app = (0, express_1.default)();
 exports.app.use((0, cors_1.default)()); // enable CORS for all origins
-// Use body parser to read sent json payloads
-// app.use(cors({
-//   origin: "*", // or your live site domain
-//   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//   allowedHeaders: ["Content-Type", "Authorization"],
-// }));
 exports.app.use((0, express_1.urlencoded)({
     extended: true,
 }));
 exports.app.use((0, express_1.json)());
-// Swagger UI endpoint
-// app.use("/docs", swaggerUi.serve, async (_req: ExRequest, res: ExResponse) => {
-//   return res.send(
-//     swaggerUi.generateHTML(await import("../build/swagger.json"))
-//   );
-// });
-// app.options("*", cors());
+exports.app.use(requestCount_1.requestCountMiddleware);
+exports.app.use(activeRequests_1.activeCountMiddleware);
+exports.app.use(requestDuration_1.requestDurationMiddleware);
 exports.app.use("/docs", swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(swagger_json_1.default));
+exports.app.get("/metrics", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const metrics = yield prom_client_1.default.register.metrics();
+    res.set('Content-Type', prom_client_1.default.register.contentType);
+    res.end(metrics);
+}));
 (0, routes_1.RegisterRoutes)(exports.app);
