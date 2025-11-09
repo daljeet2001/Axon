@@ -1,4 +1,4 @@
-![Axon Architecture](./architecture.png)
+
 ##  Getting started locally
 
 # Clone the repo
